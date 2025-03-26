@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
               fontFamily: 'Poppins'),
           initialRoute: '/',
           routes: {
-            '/': (context) => const HomeScreen(),
+            '/': (context) => const IntrestGroupListPage(),
             '/iglist': (context) => const IntrestGroupListPage(),
             '/lccard': (context) => const LcCardPage(),
             '/announcement': (context) => const AnnouncementPage(),

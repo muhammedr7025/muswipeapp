@@ -51,12 +51,6 @@ class IgDetailPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Text(igList[id]['title'],
-                      style: const TextStyle(
-                          fontSize: 25,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Poppins-Bold')),
                   Text(
                     igList[id]['title'],
                     style: GoogleFonts.poppins(
@@ -71,10 +65,10 @@ class IgDetailPage extends StatelessWidget {
                         horizontal: 10, vertical: 10),
                     child: Text(
                       igList[id]['description'],
-                      style: const TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                          fontFamily: 'Poppins'),
+                      style: GoogleFonts.poppins(
+                        fontSize: 15,
+                        color: Colors.black,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),

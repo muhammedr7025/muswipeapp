@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:muapp/screens/widget/lc_card.dart';
-import 'package:provider/provider.dart';
-
-import '../core/notifier/ig_list_notifier.dart';
+import 'dart:math';
 
 class LcCardPage extends StatefulWidget {
   const LcCardPage({super.key});
@@ -13,10 +11,23 @@ class LcCardPage extends StatefulWidget {
 }
 
 class _LcCardPageState extends State<LcCardPage> {
+  final CardSwiperController controller = CardSwiperController();
+  final Random random = Random();
+
+  // Static test data
+  final List<Map<String, dynamic>> testData = [
+    {'karma': 45, 'title': 'Test Group 1', 'memberCount': 128},
+    {'karma': 87, 'title': 'Test Group 2', 'memberCount': 256},
+    {'karma': 23, 'title': 'Test Group 3', 'memberCount': 512},
+    {'karma': 65, 'title': 'Test Group 4', 'memberCount': 64},
+    {'karma': 91, 'title': 'Test Group 5', 'memberCount': 324},
+    {'karma': 38, 'title': 'Test Group 6', 'memberCount': 176},
+    {'karma': 72, 'title': 'Test Group 7', 'memberCount': 221},
+    {'karma': 54, 'title': 'Test Group 8', 'memberCount': 389},
+  ];
+
   @override
   Widget build(BuildContext context) {
-    final CardSwiperController controller = CardSwiperController();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('LC Lists'),
@@ -30,26 +41,28 @@ class _LcCardPageState extends State<LcCardPage> {
       body: SizedBox(
         child: Column(
           children: [
-            Consumer<ICNotifier>(
-              builder: (context, snapshot,_) {
-                return snapshot.getIsLoading ?  const Flexible(child: CircularProgressIndicator()) : Flexible(
-                  child: CardSwiper(
-                    controller: controller,
-                    onSwipe: (previousIndex,currentIndex,direction){
-                      return onSwipe(previousIndex, currentIndex, direction,snapshot);
-                    },
-                    onUndo: _onUndo,
-                    isLoop: false,
-                    allowedSwipeDirection: const AllowedSwipeDirection.symmetric(horizontal: true),
-                    maxAngle: 30,
-                    cardsCount: snapshot.getIcModel?.response.data.length ?? 0,
-                    cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
-                          final data =  snapshot.getIcModel?.response.data[index];
-                          return LcCard(karma: (data?.karma ?? 0).toString() ,title: data?.igName ?? "",memberCount: (data?.memberCount ?? 0).toString() ,);
-                        },
-                  ),
-                );
-              }
+            Expanded(
+              child: CardSwiper(
+                controller: controller,
+                onSwipe: (previousIndex, currentIndex, direction) {
+                  return _onSwipe(previousIndex, currentIndex, direction);
+                },
+                onUndo: _onUndo,
+                isLoop: false,
+                allowedSwipeDirection:
+                    const AllowedSwipeDirection.symmetric(horizontal: true),
+                maxAngle: 30,
+                cardsCount: testData.length,
+                cardBuilder:
+                    (context, index, percentThresholdX, percentThresholdY) {
+                  final data = testData[index];
+                  return LcCard(
+                    karma: data['karma'].toString(),
+                    title: data['title'],
+                    memberCount: data['memberCount'].toString(),
+                  );
+                },
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 40.0),
@@ -78,16 +91,8 @@ class _LcCardPageState extends State<LcCardPage> {
     );
   }
 
-  bool onSwipe(
-    int previousIndex,
-    int? currentIndex,
-    CardSwiperDirection direction,
-    ICNotifier snapshot
-  ) {
-    if (currentIndex == (snapshot.getIcModel?.response.data.length ?? 0) - 1 && snapshot.getIcModel?.response.pagination.isNext == true) {
-     snapshot.igList(context: context, ig: snapshot.getIG ?? "", district: snapshot.getDistrict ?? "",pageIndex: snapshot.getIcModel?.response.pagination.nextPage??1);
-      print("next page");
-    }
+  bool _onSwipe(
+      int previousIndex, int? currentIndex, CardSwiperDirection direction) {
     debugPrint(
       'The card $previousIndex was swiped to the ${direction.name}. Now the card $currentIndex is on top',
     );
